@@ -62,11 +62,11 @@ jobs:
           echo ${{ env.RCLONE_CONFIG }} > rclone.conf
 
           # Generate Nextcloud config file
-          sed -i "s/%fly_app_name%/${{ env.fly_app_name }}/g" fly.toml
-          sed -i "s/%rclone_from%/${{ env.rclone_from }}/g" fly.toml
-          sed -i "s/%rclone_to%/${{ env.rclone_to }}/g" fly.toml
-          sed -i "s/%restic_password%/${{ env.restic_password }}/g" fly.toml
-          sed -i "s/%restic_prune_args%/${{ env.restic_prune_args }}/g" fly.toml
+          sed -i "s\%fly_app_name%\${{ env.fly_app_name }}\g" fly.toml
+          sed -i "s\%rclone_from%\${{ env.rclone_from }}\g" fly.toml
+          sed -i "s\%rclone_to%\${{ env.rclone_to }}\g" fly.toml
+          sed -i "s\%restic_password%\${{ env.restic_password }}\g" fly.toml
+          sed -i "s\%restic_prune_args%\${{ env.restic_prune_args }}\g" fly.toml
 
           # Deploy Nextcloud
           fly deploy
