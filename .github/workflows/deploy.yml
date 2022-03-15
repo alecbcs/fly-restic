@@ -31,15 +31,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-     - name: Setup Fly
+      - name: Setup Fly
         run: |
 
           # Install flyctl application
           curl -L https://fly.io/install.sh | FLYCTL_INSTALL=/usr/local sh
 
-     - name: Deploy Restic App
-       run: |
-
+      - name: Deploy Restic App
+        run: |
 
           # Set FLY_API_TOKEN for user authentication
           export FLY_API_TOKEN=${{ env.fly_api_token }}
