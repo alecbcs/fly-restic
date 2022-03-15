@@ -1,0 +1,20 @@
+# fly.toml file generated for fly-restic on 2022-03-15T12:39:32-07:00
+
+app = "%fly_app_name%"
+
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[build]
+  build = "Dockerfile"
+
+[env]
+  RCLONE_FROM = "%rclone_from%"
+  RCLONE_TO = "%rclone_to%"
+  RESTIC_PASSWORD = "%restic_password%"
+  RESTIC_PRUNE_ARGS = "%restic_prune_args%"
+
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true

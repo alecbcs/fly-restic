@@ -1,0 +1,76 @@
+name: (Re)Deploy Fly-Restic
+on:
+  # Allow for running the deployment manually
+  workflow_dispatch:
+
+  # Re-deploy the Restic application to Fly on pushes to the main branch
+  push:
+    branches:
+      - main
+
+  # Periodically run the workflow to re-deploy updated containers
+  schedule:
+    - cron: '0 9 * * 0'
+
+jobs:
+  update-deploy-restic:
+    runs-on: ubuntu-latest
+
+    env:
+      fly_org: ${{ secrets.FLY_ORG }}
+      fly_api_token: ${{ secrets.FLY_API_TOKEN }}
+      fly_app_name: ${{ secrets.FLY_APP_NAME }}
+      fly_app_region: ${{ secrets.FLY_APP_REGION }}
+      restic_password: ${{ secrets.RESTIC_PASSWORD }}
+      restic_prune_args: ${{ secrets.RESTIC_PRUNE_ARGS }}
+      rclone_config: ${{ secrets.RCLONE_CONFIG }}
+      rclone_from: ${{ secrets.RCLONE_FROM }}
+      rclone_to: ${{ secrets.RCLONE_TO }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+     - name: Setup Fly
+        run: |
+
+          # Install flyctl application
+          curl -L https://fly.io/install.sh | FLYCTL_INSTALL=/usr/local sh
+
+     - name: Deploy Restic App
+       run: |
+
+
+          # Set FLY_API_TOKEN for user authentication
+          export FLY_API_TOKEN=${{ env.fly_api_token }}
+
+          # Check if the nextcloud app has already been deployed
+          if [ -z "$(fly apps list | grep '${{ env.fly_app_name }}[^-]')" ]; then
+              # Create the nextcloud app
+              fly launch --name ${{ env.fly_app_name }} \
+                         --no-deploy \
+                         --org ${{ env.fly_org }} \
+                         --region ${{ env.fly_app_region }}
+
+              # Clean up generated fly.toml config
+              rm fly.toml
+          fi
+
+          # Enter Nextcloud config
+          cd restic
+
+          # Write out rclone.conf to file
+          echo ${{ env.RCLONE_CONFIG }} > rclone.conf
+
+          # Generate Nextcloud config file
+          sed -i "s/%fly_app_name%/${{ env.fly_app_name }}/g" fly.toml
+          sed -i "s/%rclone_from%/${{ env.rclone_from }}/g" fly.toml
+          sed -i "s/%rclone_to%/${{ env.rclone_to }}/g" fly.toml
+          sed -i "s/%restic_password%/${{ env.restic_password }}/g" fly.toml
+          sed -i "s/%restic_prune_args%/${{ env.restic_prune_args }}/g" fly.toml
+
+          # Deploy Nextcloud
+          fly deploy
+
+          # Leave Nextcloud config
+          cd ..
