@@ -64,7 +64,7 @@ flyctl auth token
 6. Run `flyctl deploy`
 
 ### Examples
-#### `RCLONE_CONFIG` or `rclone.conf` File.
+#### `CRON_SPEC` or `restic/entry-cron` File.
 ```
 0 0/6 * * * restic -r rclone:$RCLONE_TO backup --verbose /data && \
             restic -r rclone:$RCLONE_TO check && \
@@ -72,7 +72,7 @@ flyctl auth token
 ```
 This example creates a backup snapshot of the `RCLONE_TO` data, checks previous backup integrety, and prunes old backups every 6 hours.
 
-#### `CRON_SPEC` or `restic/entry-cron` File.
+#### `RCLONE_CONFIG` or `rclone.conf` File.
 ```
 [nextcloud]
 type = webdav
