@@ -21,6 +21,7 @@ jobs:
       fly_api_token: ${{ secrets.FLY_API_TOKEN }}
       fly_app_name: ${{ secrets.FLY_APP_NAME }}
       fly_app_region: ${{ secrets.FLY_APP_REGION }}
+      cron_spec: ${{ secrets.CRON_SPEC }}
       restic_password: ${{ secrets.RESTIC_PASSWORD }}
       restic_prune_args: ${{ secrets.RESTIC_PRUNE_ARGS }}
       rclone_config: ${{ secrets.RCLONE_CONFIG }}
@@ -60,6 +61,9 @@ jobs:
 
           # Write out rclone.conf to file
           echo "${{ env.rclone_config }}" > rclone.conf
+
+          # Write out cron-spec to file
+          echo "${{ env.cron_spec }}" > entry-cron
 
           # Generate Nextcloud config file
           sed -i "s\%fly_app_name%\${{ env.fly_app_name }}\g" fly.toml

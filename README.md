@@ -32,12 +32,14 @@ flyctl auth token
    FLY_ORG
    FLY_APP_NAME
    FLY_APP_REGION
+   CRON_SPEC
    RESTIC_PASSWORD
    RESTIC_PRUNE_ARGS
    RCLONE_CONFIG
    RCLONE_FROM
    RCLONE_TO
    ```
+   See below for examples of a `CRON_SPEC`, `RCLONE_CONFIG`, `RCLONE_FROM`, and `RCLONE_TO`.
 4. Now go to your repositories "Actions" tab. You should see one action, (re)deploy restic.
 5. Click on (re)deploy & enable the workflow for your fork.
 6. Now manually run your workflow by clicking "Run Workflow" on the right of the screen. Your workflow should now begin and automatically deploy your Restic app.
@@ -48,9 +50,9 @@ flyctl auth token
    ```
    flyctl launch --name {{ YOUR-APP-NAME }}
    rm fly.toml
-   
+
    cd restic
-   
+
    sed -i "s\%fly_app_name%\{{ YOUR APP NAME }}\g" fly.toml
    sed -i "s\%rclone_from%\{{ RCLONE_FROM }}\g" fly.toml
    sed -i "s\%rclone_to%\{{ RCLONE_TO }}\g" fly.toml
@@ -58,8 +60,49 @@ flyctl auth token
    sed -i "s\%restic_prune_args%\{{ RESTIC_PRUNE_ARGS }}\g" fly.toml
    ```
 4. Copy your rclone.conf to this `restic/`.
-5. Edit the `entry-cron` file to fit your specific needs.
+5. Create a file named `entry-cron` within `restic/` that defines the cron job to be run with rclone and restic. (See below for an example of a cron definition.)
 6. Run `flyctl deploy`
+
+### Examples
+#### `RCLONE_CONFIG` or `rclone.conf` File.
+```
+0 0/6 * * * restic -r rclone:$RCLONE_TO backup --verbose /data && \
+            restic -r rclone:$RCLONE_TO check && \
+            restic -r rclone:$RCLONE_TO forget --prune $RESTIC_PRUNE_ARGS
+```
+This example creates a backup snapshot of the `RCLONE_TO` data, checks previous backup integrety, and prunes old backups every 6 hours.
+
+#### `CRON_SPEC` or `restic/entry-cron` File.
+```
+[nextcloud]
+type = webdav
+url = https://instance.domain.tld/remote.php/dav/files/username/
+vendor = nextcloud
+user = username
+pass = rEdAcTeD
+
+[s3]
+type = s3
+provider = a-provider-or-other
+access_key_id = rEdAcTeD
+secret_access_key = rEdAcTeD
+endpoint = s3.region.provider.tld
+```
+This example shows webdav and s3 providers for rclone. You can generate this file by running,
+```
+rclone config
+```
+Then copy the generated file from `$HOME/.config/rclone/rclone.conf` into `restic/rclone.conf`.
+
+#### `RCLONE_FROM`
+```
+nextcloud:/
+```
+
+#### `RCLONE_TO`
+```
+s3:bucket-name/
+```
 
 ## License
 
