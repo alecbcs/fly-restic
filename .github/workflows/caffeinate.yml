@@ -1,0 +1,20 @@
+name: Caffeinate Workflows
+on:
+  push:
+    branches:
+      - main
+
+  # Periodically run the workflow to re-enable workflows
+  schedule:
+    - cron: '0 9 * * 0'
+
+jobs:
+  update-deploy-restic:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Caffeinate Workflows
+        uses: alecbcs/caffeinate-workflows@v0.1.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_repository: ${{ github.repository }}
