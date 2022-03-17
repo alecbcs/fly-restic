@@ -9,7 +9,7 @@ on:
     - cron: '0 9 * * 0'
 
 jobs:
-  update-deploy-restic:
+  caffeinate-workflows:
     runs-on: ubuntu-latest
 
     steps:
