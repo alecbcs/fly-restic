@@ -1,9 +1,5 @@
 name: Caffeinate Workflows
 on:
-  push:
-    branches:
-      - main
-
   # Periodically run the workflow to re-enable workflows
   schedule:
     - cron: '0 9 * * 0'
