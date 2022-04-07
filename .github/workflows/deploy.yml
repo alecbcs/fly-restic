@@ -60,10 +60,10 @@ jobs:
           cd restic
 
           # Write out rclone.conf to file
-          echo "${{ env.rclone_config }}" > rclone.conf
+          echo '${{ env.rclone_config }}' > rclone.conf
 
           # Write out cron-spec to file
-          echo "${{ env.cron_spec }}" > entry-cron
+          echo '${{ env.cron_spec }}' > entry-cron
 
           # Generate Nextcloud config file
           sed -i "s\%fly_app_name%\${{ env.fly_app_name }}\g" fly.toml
