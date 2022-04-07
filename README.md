@@ -66,7 +66,7 @@ flyctl auth token
 ### Examples
 #### `CRON_SPEC` or `restic/entry-cron` File.
 ```
-0 0/6 * * * restic -r rclone:$RCLONE_TO backup --verbose /data && \
+0 */6 * * * restic -r rclone:$RCLONE_TO backup --verbose /data && \
             restic -r rclone:$RCLONE_TO check && \
             restic -r rclone:$RCLONE_TO forget --prune $RESTIC_PRUNE_ARGS
 ```
